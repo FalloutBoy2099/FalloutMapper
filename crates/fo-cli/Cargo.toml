@@ -1,0 +1,23 @@
+[package]
+name = "fo-cli"
+description = "Outils en ligne de commande : liste, inspection et rendu PNG des cartes Fallout 2"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[[bin]]
+name = "fomap"
+path = "src/main.rs"
+
+[dependencies]
+fo-core.workspace = true
+fo-scene.workspace = true
+fo-script.workspace = true
+anyhow.workspace = true
+clap.workspace = true
+png.workspace = true
+serde_json.workspace = true
+
+[lints]
+workspace = true

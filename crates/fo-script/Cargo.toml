@@ -1,0 +1,14 @@
+[package]
+name = "fo-script"
+description = "Scripts compilés Fallout 2 (.int) : lecture, désassemblage et pseudo-source"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+fo-core.workspace = true
+thiserror.workspace = true
+
+[lints]
+workspace = true

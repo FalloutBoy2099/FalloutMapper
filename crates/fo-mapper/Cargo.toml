@@ -1,0 +1,28 @@
+[package]
+name = "fo-mapper"
+description = "FalloutMapper : visionneuse (puis éditeur) de cartes Fallout 2"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[[bin]]
+name = "fallout-mapper"
+path = "src/main.rs"
+
+[dependencies]
+fo-core.workspace = true
+fo-scene.workspace = true
+fo-script.workspace = true
+anyhow.workspace = true
+eframe = { version = "0.37", features = ["persistence"] }
+png.workspace = true
+chrono = { version = "0.4", default-features = false, features = ["clock", "std"] }
+serde.workspace = true
+serde_json.workspace = true
+
+[target.'cfg(windows)'.dependencies]
+winreg = "0.55"
+
+[lints]
+workspace = true
