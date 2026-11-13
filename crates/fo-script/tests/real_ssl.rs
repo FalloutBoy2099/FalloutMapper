@@ -21,6 +21,7 @@ fn collect(dir: &Path, out: &mut Vec<PathBuf>) {
 }
 
 #[test]
+#[ignore = "lent (environ une minute) : cargo test -p fo-script --test real_ssl -- --ignored"]
 fn procedure_names_match_the_compiled_scripts() {
     let root =
         PathBuf::from(std::env::var("FO_SSL_SOURCES").unwrap_or_else(|_| {

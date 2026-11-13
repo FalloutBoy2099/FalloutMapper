@@ -1856,3 +1856,30 @@ fn diag_animated_scenery() {
     }
     eprintln!("ANIM kinds {}", kinds.len());
 }
+
+#[test]
+#[ignore]
+fn diag_analysis_timing() {
+    use std::time::Instant;
+    let Some(game) = unpacked() else { return };
+    let files: Vec<String> = game.list_maps().iter().map(|m| m.file.clone()).collect();
+    let (mut t_read, mut t_tiles, mut t_walls, mut t_build) = (0f64, 0f64, 0f64, 0f64);
+    let (mut floor, mut roof, mut walls) = (fo_core::tile_stats::TileStats::default(), fo_core::tile_stats::TileStats::default(), fo_core::room::WallStats::default());
+    for f in &files {
+        let t = Instant::now();
+        let Ok(b) = game.read_map_bytes(f) else { continue };
+        let Ok(m) = read_map(&b, &game) else { continue };
+        t_read += t.elapsed().as_secs_f64();
+        let t = Instant::now();
+        floor.add_map(&m, fo_core::map::TileLayer::Floor);
+        roof.add_map(&m, fo_core::map::TileLayer::Roof);
+        t_tiles += t.elapsed().as_secs_f64();
+        let t = Instant::now();
+        walls.add_map(&m);
+        t_walls += t.elapsed().as_secs_f64();
+        let t = Instant::now();
+        let _ = fo_core::buildings::detect(f, &m);
+        t_build += t.elapsed().as_secs_f64();
+    }
+    eprintln!("TIMING cartes {} lecture {t_read:.1}s tuiles {t_tiles:.1}s murs {t_walls:.1}s bâtiments {t_build:.1}s", files.len());
+}

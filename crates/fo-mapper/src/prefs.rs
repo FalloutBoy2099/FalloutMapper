@@ -74,10 +74,11 @@ pub(crate) enum KeyAction {
     Preview,
     History,
     Options,
+    LockSelection,
 }
 
 impl KeyAction {
-    pub(crate) const COUNT: usize = 18;
+    pub(crate) const COUNT: usize = 19;
     pub(crate) const ALL: [KeyAction; Self::COUNT] = [
         KeyAction::Fit,
         KeyAction::Home,
@@ -97,6 +98,7 @@ impl KeyAction {
         KeyAction::Preview,
         KeyAction::History,
         KeyAction::Options,
+        KeyAction::LockSelection,
     ];
 
     fn index(self) -> usize {
@@ -105,7 +107,7 @@ impl KeyAction {
 
     /// Se fait avec Ctrl (Commande sur Mac).
     pub(crate) fn with_ctrl(self) -> bool {
-        self.index() >= 4
+        self.index() >= 4 && self != KeyAction::LockSelection
     }
 
     fn pref_key(self) -> &'static str {
@@ -128,6 +130,7 @@ impl KeyAction {
             "pref_key_preview",
             "pref_key_history",
             "pref_key_options",
+            "pref_key_lock_selection",
         ][self.index()]
     }
 
@@ -151,12 +154,13 @@ impl KeyAction {
             "Aperçu du jeu",
             "Historique",
             "Options",
+            "Verrouiller la sélection",
         ][self.index()]
     }
 
     fn default_key(self) -> egui::Key {
         use egui::Key::*;
-        [F, Home, R, P, Z, Y, S, J, A, D, N, W, B, E, K, G, H, Comma][self.index()]
+        [F, Home, R, P, Z, Y, S, J, A, D, N, W, B, E, K, G, H, Comma, L][self.index()]
     }
 }
 

@@ -395,9 +395,14 @@ impl MapperApp {
     /// Déplace tous les objets sélectionnés comme l'objet saisi : il va de `from` à `to`, les autres gardent leur
     /// position relative (calculée en coordonnées cube, donc sans déformation selon la parité des colonnes).
     pub(crate) fn move_selection(&mut self, from: u32, to: u32) {
+        self.move_selection_tagged(from, to, None);
+    }
+
+    /// Comme `move_selection` ; avec une étiquette, les déplacements rapprochés (flèches du clavier) ne font qu'une étape d'historique.
+    pub(crate) fn move_selection_tagged(&mut self, from: u32, to: u32, tag: Option<&'static str>) {
         let e = self.elevation;
         let indices = self.selection.object_indices(e);
-        self.mutate_as("Déplacement", |m, _| {
+        let step = |m: &mut fo_core::Map, _: &fo_core::GameData| {
             let mut any = false;
             for i in indices {
                 let Some(t) = m.objects[e]
@@ -412,7 +417,15 @@ impl MapperApp {
                 }
             }
             any
-        });
+        };
+        match tag {
+            Some(t) => {
+                self.mutate(Some(t), step);
+            }
+            None => {
+                self.mutate_as("Déplacement", step);
+            }
+        }
     }
 
     pub(crate) fn delete_selected(&mut self) {

@@ -9,7 +9,7 @@ Visionneuse (puis éditeur) de cartes Fallout 2, 100 % Rust.
 | `fo-core` | DAT2, VFS (dossiers + archives), FRM, PAL, LST, PRO, **MAP (lecture/écriture sans perte)**, géométrie hex/iso |
 | `fo-scene` | Scène d'une élévation (sprites ordonnés, repères) + rendu logiciel |
 | `fo-script` | Scripts `.int` : procédures, tables de chaînes, 641 opcodes (Fallout 2 + sfall), désassemblage, pseudo-source structuré avec textes des `.msg` en commentaire, variables nommées (globales, exportées, `argN`/`LVarN`) (`if`/`else if`/`while`/`do-while`/`break`) |
-| `fo-cli` | `fomap list / info / render` (PNG) / `script <nom> [-p proc] [--asm]` |
+| `fo-cli` | `fomap` : `list`, `info`, `render` (PNG), `script`, `ssl` (analyse d'une source SSL), `analyze`, `graph`, `reach`, `check`, `frm`, `gvars` (voir « Outils en ligne de commande ») |
 | `fo-mapper` | Application egui : onglets **Carte** (pan/zoom, couches, inspecteur d'objet) et **Scripts** (scripts de la carte, tous les scripts, procédures, pseudo-source / listing) |
 
 ## Utilisation
@@ -79,6 +79,33 @@ Le choix **Mobilier assorti** sélectionne un ensemble observé dans les cartes 
 
 Référence du compilateur : <https://github.com/sfall-team/sslc>.
 
+- **Script spatial** : outil de la barre d'outils. On choisit un script et un rayon, un cercle suit le curseur, un clic pose le script (annulable) ; les scripts déjà posés montrent leur contour.
+- **Remplir d'après une carte du jeu** : dans la palette des sols et des toits, « Synthèse d'après une carte du jeu » recompose la sélection par blocs recopiés d'une carte modèle (`fo-core/src/quilt.rs`), avec en option des décors semés comme dans cette carte. « Autre tirage » défait et refait avec une autre graine.
+- **Bâtiments du jeu** : outil Tampon → « Bâtiments du jeu » : les constructions réelles repérées dans toutes les cartes (murs, décors, sol, toit), à poser telles quelles (`fo-core/src/buildings.rs`). Demande l'analyse de toutes les cartes.
+- **Analyse d'une source SSL** : dans l'éditeur de source, panneau « Analyse du script » (procédures, appels, variables globales / de carte / locales, messages, prototypes créés, recherche par variable), sans compiler (`fo-script/src/ssl.rs`).
+- **Barre d'outils personnalisable** : clic droit sur la barre du haut pour choisir les outils et leur ordre. **Liste des cartes** : vue dossiers ou liste, tri alphabétique ou dans l'ordre du jeu, croissant ou décroissant. **Journal** : chaque étape d'édition y est notée, avec un bouton qui recentre la vue sur son hexagone.
+- **Flèches du clavier** : avec l'outil Sélection, les flèches déplacent l'objet ou le groupe sélectionné d'un hexagone à l'écran (Maj : trois) ; une série de pressions ne fait qu'une étape d'historique.
+- **Verrouiller la sélection** (bouton cadenas de la barre d'outils, bouton du panneau de sélection, touche `L` modifiable dans Options) : ni un clic, ni un rectangle, ni Échap, ni Ctrl+A ne changent la sélection ; on ne peut saisir et déplacer que ses objets. Le cadre devient orange ; le verrou tombe quand la sélection est vide.
+- **Outil Pièce** : le coin se pose sur le quadrillage des cases de sol (colonne et ligne paires), donc le sol suit les murs et l'aperçu ne change pas quand la souris bouge ; « Autre variante » (ou les boutons précédent/suivant de la souris) change la disposition.
+
+### Outils en ligne de commande
+
+`fomap -g <dossier du jeu> <commande>` (ou `FO2_GAME_DIR`). `--json` donne une sortie structurée pour les scripts.
+
+| Commande | Rôle |
+|---|---|
+| `analyze <carte>` | objets par type, décors et sols les plus fréquents, sorties, scripts |
+| `graph [--dot]` | liens entre cartes (sorties), texte, JSON ou Graphviz |
+| `reach <carte> [-e N]` | sorties et portes atteignables à pied depuis le départ |
+| `check <carte>` | contrôle de la carte (comme « Vérifier la carte ») |
+| `frm <chemin>` | cadence, directions et images d'un FRM |
+| `gvars [filtre]` | variables globales du jeu (`vault13.gam`) |
+| `ssl <fichier.ssl> [-I dossier] [-p proc] [--gvar N]` | analyse statique d'une source SSL (ne demande pas le jeu) |
+
+### Réglages de l'utilisateur
+
+Ils sont dans la base de registre, `HKEY_CURRENT_USER\SOFTWARE\FALLOUT\FalloutMapper` (une valeur texte par réglage : préférences, dossiers récents, profils de jeu, calques, barre d'outils, fenêtre…). À la première ouverture, les anciens fichiers (`app.ron`, `window.txt` du dossier de stockage de l'application) sont lus puis recopiés dans le registre. Ailleurs que sous Windows, un fichier `settings.txt` sert de repli. `FO_SETTINGS_KEY` remplace le chemin de la clé (essais). Les copies de récupération (`recovery\`) et les brouillons SSL (`%LOCALAPPDATA%/FalloutMapper/script-drafts`) restent des fichiers.
+
 ### Essai automatique de l'interface
 
 `FO_SELFTEST_WRITE_OK=1 FO_SELFTEST=rapport.txt fallout-mapper <copie-jetable-du-dossier-de-jeu> arvillag` (l'essai écrit des cartes dans le dossier : jamais sur une vraie installation) injecte de vrais événements souris/clavier
@@ -93,4 +120,4 @@ dans `fallout2.cfg`. Menu Affichage → « Animer la palette ». `fomap render -
 
 ## Pistes suivantes
 
-`for`/`switch` reconstruits, édition d'objets/tuiles (le modèle `Map` est déjà sérialisable), animations.
+`for`/`switch` reconstruits ; éditeur de prototypes (`.pro`) ; son d'ambiance ; serveur MCP et autres outils d'analyse de Gecko (quêtes, fins du jeu, groupe, sauvegardes, rencontres) ; voir `TODO.md`.

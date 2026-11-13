@@ -63,6 +63,46 @@ pub(crate) fn drive(app: &mut MapperApp, ctx: &egui::Context, raw: &mut egui::Ra
             _ => {}
         }
     }
+    // FO_SHOT_NUDGE=1 : sélectionne un décor, injecte les quatre flèches du clavier et note où va l'objet (en mémoire seulement).
+    if std::env::var_os("FO_SHOT_NUDGE").is_some() {
+        let first_tile = |app: &MapperApp| app.selection.primary().and_then(|r| app.object(r)).map(|o| o.tile());
+        if n == 130 {
+            app.edit.enabled = true;
+            app.edit.tool = crate::edit_ui::Tool::Select;
+            let pick = app.current.as_ref().and_then(|c| {
+                c.map.objects[0].iter().position(|o| o.object_type() == Some(fo_core::ObjectType::Scenery) && o.tile() > 5_000 && o.tile() < 35_000)
+            });
+            if let Some(i) = pick {
+                app.selection.set_object(Some(fo_scene::ObjectRef { elevation: 0, index: i as u32 }));
+            }
+            eprintln!("NUDGE départ {:?}", first_tile(app));
+        }
+        // Verrou : L verrouille, puis Échap ne doit plus désélectionner.
+        if n == 146 {
+            eprintln!("NUDGE avant verrou : {} objet(s) sélectionné(s)", app.selection.objects().len());
+        }
+        for (frame, key) in [(147, egui::Key::L), (150, egui::Key::Escape)] {
+            if n == frame {
+                for pressed in [true, false] {
+                    raw.events.push(egui::Event::Key { key, physical_key: Some(key), pressed, repeat: false, modifiers: egui::Modifiers::NONE });
+                }
+            }
+        }
+        if n == 153 {
+            eprintln!("NUDGE verrou={} après Échap : {} objet(s) sélectionné(s)", app.edit.selection_locked, app.selection.objects().len());
+        }
+        let keys = [(131, egui::Key::ArrowRight), (134, egui::Key::ArrowDown), (137, egui::Key::ArrowLeft), (140, egui::Key::ArrowUp)];
+        for (frame, key) in keys {
+            if n == frame {
+                for pressed in [true, false] {
+                    raw.events.push(egui::Event::Key { key, physical_key: Some(key), pressed, repeat: false, modifiers: egui::Modifiers::NONE });
+                }
+            }
+            if n == frame + 2 {
+                eprintln!("NUDGE {key:?} -> {:?} (étapes d'annulation {})", first_tile(app), app.edit.undo_labels.len());
+            }
+        }
+    }
     // FO_SHOT_CTRLS=1 (avec FO_SELFTEST_WRITE_OK=1, sur un dossier de jeu jetable) : ajoute un objet puis injecte un vrai
     // Ctrl+S ; le résultat est écrit sur la sortie d'erreur.
     if std::env::var_os("FO_SHOT_CTRLS").is_some() {

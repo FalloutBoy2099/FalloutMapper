@@ -659,7 +659,6 @@ const EN: &[(&str, &str)] = &[
         "Test folder (optional; blank = mapping)",
     ),
     ("Mettre à jour", "Update"),
-    ("Ajouter", "Add"),
     ("Nouveau", "New"),
     ("Supprimer", "Delete"),
     (
@@ -794,6 +793,11 @@ const EN: &[(&str, &str)] = &[
     ("+ entrée", "+ entry"),
     ("8 caractères max", "8 characters max"),
     ("Affichage", "View"),
+    ("Verrouiller la sélection", "Lock the selection"),
+    ("Sélection déverrouillée.", "Selection unlocked."),
+    ("Rien à verrouiller : sélectionnez d'abord un élément.", "Nothing to lock: select an item first."),
+    ("Sélection verrouillée : un clic ou un rectangle ne la change plus.", "Selection locked: a click or a rectangle no longer changes it."),
+    ("Empêche de changer de sélection par erreur", "Prevents changing the selection by mistake"),
     (
         "Carte de référence illisible.",
         "The reference map cannot be read.",
@@ -1096,7 +1100,6 @@ const EN: &[(&str, &str)] = &[
     ),
     ("Supprimer la dernière", "Delete the last one"),
     ("Supprimer les cases", "Delete tiles"),
-    ("Supprimer", "Delete"),
     ("Sélection", "Selection"),
     ("Sélectionner :", "Select:"),
     ("Sélectionnez une carte.", "Select a map."),

@@ -2,6 +2,16 @@
 
 mod analysis_ui;
 mod app;
+mod menu_ui;
+mod map_list_ui;
+mod inspector_ui;
+mod canvas_ui;
+mod edit_history;
+mod edit_file;
+mod edit_input;
+mod edit_overlay;
+mod edit_panel_ui;
+mod palette_ui;
 mod check_ui;
 mod construction_ui;
 mod diff_ui;

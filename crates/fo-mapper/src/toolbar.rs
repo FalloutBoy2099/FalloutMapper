@@ -177,6 +177,24 @@ impl MapperApp {
                             if r.clicked() {
                                 self.redo();
                             }
+                            // Verrouiller la sélection : on ne la change plus par erreur (cliquer, rectangle, Échap).
+                            let r = icon_button(
+                                ui,
+                                Icon::Lock,
+                                self.edit.selection_locked,
+                                self.edit.selection_locked || !self.selection.is_empty(),
+                            );
+                            note(
+                                &r,
+                                &format!(
+                                    "{} ({})",
+                                    crate::i18n::t("Verrouiller la sélection"),
+                                    self.prefs.shortcut_text(crate::prefs::KeyAction::LockSelection)
+                                ),
+                            );
+                            if r.clicked() {
+                                self.toggle_selection_lock();
+                            }
                             ui.separator();
                             for (tool, _) in
                                 self.toolbar_tools.clone().into_iter().filter(|(_, on)| *on)

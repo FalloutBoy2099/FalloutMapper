@@ -35,6 +35,7 @@ pub(crate) enum Icon {
     Room,
     Preview,
     Spatial,
+    Lock,
 }
 
 /// Dessine `icon` dans `rect` (coordonnées normalisées 0..1 à l'intérieur d'un carré centré).
@@ -250,6 +251,12 @@ pub(crate) fn paint(p: &Painter, rect: Rect, icon: Icon, color: Color32) {
                 })
                 .collect();
             p.add(Shape::convex_polygon(half, color, Stroke::NONE));
+        }
+        Icon::Lock => {
+            // Un cadenas : l'anse au-dessus, le corps en dessous.
+            closed(&[(0.2, 0.46), (0.8, 0.46), (0.8, 0.9), (0.2, 0.9)]);
+            line(&[(0.32, 0.46), (0.32, 0.3), (0.38, 0.14), (0.5, 0.1), (0.62, 0.14), (0.68, 0.3), (0.68, 0.46)]);
+            p.circle_filled(pt(0.5, 0.68), side * 0.07, color);
         }
         Icon::Spatial => {
             // Un disque pointillé autour d'un centre : la zone qui déclenche le script.
